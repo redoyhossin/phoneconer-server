@@ -26,12 +26,27 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function phonecorner() {
   try {
-   
+    // API Collection
 
+    const productcategoriesCollection = client.db('phonecorner').collection('productcategories');
+
+    // API Collection
+
+
+    // productcategories
+
+    app.get('/allproductcategories', async (req, res) => {
+      const query = {};
+      const cursor = productcategoriesCollection.find(query)
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    // productcategories
 
   }
   finally {
-    
+
   }
 }
 phonecorner().catch(console.dir)
@@ -41,11 +56,11 @@ phonecorner().catch(console.dir)
 
 
 app.get('/', (req, res) => {
-  res.send('servar assignment 12');
+  res.send('servar12');
 });
 
 app.listen(Port, () => {
-  console.log('runnin servar assignment 12')
+  console.log('runnin servar12')
 });
 
 module.exports = app;
