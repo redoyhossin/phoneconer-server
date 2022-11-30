@@ -30,6 +30,8 @@ async function phonecorner() {
 
     const productcategoriesCollection = client.db('phonecorner').collection('productcategories');
 
+    const productsCollection = client.db('phonecorner').collection('products');
+    // products
     // API Collection
 
 
@@ -43,6 +45,20 @@ async function phonecorner() {
     })
 
     // productcategories
+
+    // productdata
+
+    app.get('/allproduct', async (req, res) => {
+      const query = {};
+      const cursor = productsCollection.find(query)
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    // productdata
+
+
+
 
   }
   finally {
