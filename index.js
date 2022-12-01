@@ -31,7 +31,9 @@ async function phonecorner() {
     const productcategoriesCollection = client.db('phonecorner').collection('productcategories');
 
     const productsCollection = client.db('phonecorner').collection('products');
-    // products
+
+    const BookingsmodalCollection = client.db('phonecorner').collection('bookedmodal');
+
     // API Collection
 
 
@@ -85,6 +87,15 @@ async function phonecorner() {
 
     // productdata
 
+    // Bookingsmodal
+
+    app.post('/modalbook', async (req, res) => {
+      const booking = req.body;
+      const result = await BookingsmodalCollection.insertOne(booking)
+      res.send(result);
+    })
+
+    // Bookingsmodal
 
 
 
