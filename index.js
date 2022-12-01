@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 require('dotenv').config();
 const Port = process.env.Port || 5000;
@@ -53,7 +53,35 @@ async function phonecorner() {
       const cursor = productsCollection.find(query)
       const result = await cursor.toArray();
       res.send(result);
+    });
+
+
+    app.get('/allproducts/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { product_id: id }
+      const catagory_news = productsCollection.find(query)
+      const result = await catagory_news.toArray()
+      res.send(result)
+      console.log(result)
     })
+
+
+    // app.get('/allproduc/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const query={_id:id}
+    //   const catagory_news = productsCollection.find(query)
+    //   const result=await catagory_news.ObjectId()
+    //   console.log(result);
+    //   res.send(result)
+    // })
+
+
+    //   app.get('/produ/:id', (req, res) => {
+    //     const id = req.params.id;
+    //     const result = productsCollection.find(p=> p._id===id);
+    //     console.log(result)
+    //     res.send(result)
+    //  })
 
     // productdata
 
