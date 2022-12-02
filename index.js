@@ -39,6 +39,24 @@ async function phonecorner() {
 
     // API Collection
 
+    // jwt verify
+    function jwtVerify(req, res, next) {
+      const jwtheader = req.headers.authorization;
+      if (!jwtheader) {
+        return res.status(401).send('Unauthorized')
+      }
+      const tokes = jwtheader.split(' ')[1];
+      jwt.verify(tokes, process.env.ACCESS_TOKEN, function (err, decoded) {
+        // console.log(decoded.foo) 
+        if (err) {
+          return res.status(403).send({ message: 'forbidden access' })
+        }
+        req.decoded = decoded;
+        next();
+      })
+    }
+    // jwt verify
+
 
     // productcategories
 
@@ -90,7 +108,7 @@ async function phonecorner() {
 
     // productdata
 
-    // Bookingsmodal
+    // Bookingsmodal and get
 
     app.post('/modalbook', async (req, res) => {
       const booking = req.body;
@@ -98,7 +116,20 @@ async function phonecorner() {
       res.send(result);
     })
 
-    // Bookingsmodal
+    app.get('/modalbook', jwtVerify, async (req, res) => {
+      const email = req.query.email;
+      const decodedmail = req.decoded.email;
+
+      if (email !== decodedmail) {
+        return res.status(403).send({ message: 'forbidden access' })
+      }
+      const query = { email: email }
+      const modalbook = await BookingsmodalCollection.find(query).toArray();
+      res.send(modalbook);
+    });
+
+
+    // Bookingsmodal and get
 
 
     // jwt token
@@ -110,20 +141,32 @@ async function phonecorner() {
         const tokens = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: 60 * 60 })
         return res.send({ accessToken: tokens });
       }
-      res.status(403).send({accessToken:''})
+      res.status(403).send({ accessToken: '' })
     })
 
     // jwt token
 
-// saved user
-    
+    // saved user
+
     app.post('/saveduser', async (req, res) => {
       const user = req.body;
       const result = await collectionUser.insertOne(user)
       res.send(result)
     })
+
+    // saved user
+
+
     
-// saved user
+    // usersget
+
+    app.get('/alluser', async (req, res) => {
+      const query = {};
+      const cursor = collectionUser.find(query)
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    // usersget
 
   }
   finally {
