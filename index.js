@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken');
 const app = express();
 require('dotenv').config();
 const Port = process.env.Port || 5000;
@@ -33,6 +34,8 @@ async function phonecorner() {
     const productsCollection = client.db('phonecorner').collection('products');
 
     const BookingsmodalCollection = client.db('phonecorner').collection('bookedmodal');
+
+    const collectionUser = client.db('phonecorner').collection('saveduser');
 
     // API Collection
 
@@ -98,6 +101,29 @@ async function phonecorner() {
     // Bookingsmodal
 
 
+    // jwt token
+    app.get('/jwttoken', async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const user = await collectionUser.findOne(query);
+      if (user) {
+        const tokens = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: 60 * 60 })
+        return res.send({ accessToken: tokens });
+      }
+      res.status(403).send({accessToken:''})
+    })
+
+    // jwt token
+
+// saved user
+    
+    app.post('/saveduser', async (req, res) => {
+      const user = req.body;
+      const result = await collectionUser.insertOne(user)
+      res.send(result)
+    })
+    
+// saved user
 
   }
   finally {
