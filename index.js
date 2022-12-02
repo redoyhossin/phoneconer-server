@@ -89,40 +89,22 @@ async function phonecorner() {
     })
 
 
-    // app.get('/allproduc/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const query={_id:id}
-    //   const catagory_news = productsCollection.find(query)
-    //   const result=await catagory_news.ObjectId()
-    //   console.log(result);
-    //   res.send(result)
-    // })
-
-
-    //   app.get('/produ/:id', (req, res) => {
-    //     const id = req.params.id;
-    //     const result = productsCollection.find(p=> p._id===id);
-    //     console.log(result)
-    //     res.send(result)
-    //  })
-
-    // productdata
-
-    // Bookingsmodal and get
-
     app.post('/modalbook', async (req, res) => {
       const booking = req.body;
       const result = await BookingsmodalCollection.insertOne(booking)
       res.send(result);
     })
 
-    app.get('/modalbook', jwtVerify, async (req, res) => {
-      const email = req.query.email;
-      const decodedmail = req.decoded.email;
+    // jwtVerify,
 
-      if (email !== decodedmail) {
-        return res.status(403).send({ message: 'forbidden access' })
-      }
+    app.get('/modalbook', async (req, res) => {
+      const email = req.query.email;
+
+      // const decodedmail = req.decoded.email;
+
+      // if (email !== decodedmail) {
+      //   return res.status(403).send({ message: 'forbidden access' })
+      // }
       const query = { email: email }
       const modalbook = await BookingsmodalCollection.find(query).toArray();
       res.send(modalbook);
@@ -138,7 +120,7 @@ async function phonecorner() {
       const query = { email: email };
       const user = await collectionUser.findOne(query);
       if (user) {
-        const tokens = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: 60 * 60 })
+        const tokens = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
         return res.send({ accessToken: tokens });
       }
       res.status(403).send({ accessToken: '' })
@@ -157,7 +139,7 @@ async function phonecorner() {
     // saved user
 
 
-    
+
     // usersget
 
     app.get('/alluser', async (req, res) => {
@@ -167,6 +149,40 @@ async function phonecorner() {
       res.send(result);
     });
     // usersget
+
+    // adimroll
+    app.put('/alluser/admin/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) }
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          role:'admin'
+        }
+      }
+      const result = await collectionUser.updateOne(filter, updatedDoc, options);
+      // console.log(result)
+      res.send(result)
+ })
+// adimroll
+
+    // admineroute
+
+    app.get('/allusers/admin/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await collectionUser.findOne(query);
+      res.send({ isAdmin: user?.role === 'admin' });
+
+    })
+
+
+
+
+
+
+    //
+
 
   }
   finally {
